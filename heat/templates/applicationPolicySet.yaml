@@ -1,0 +1,76 @@
+# CONTRAIL SECURITY
+
+# Author: SAVITHRU LOKANATH
+# Contact: SAVITHRU AT JUNIPER.NET
+# Copyright (c) 2017 Juniper Networks, Inc. All rights reserved
+
+heat_template_version: 2015-10-15
+
+description: >
+  HOT to deploy Contrail Security
+
+parameters:
+  applicationPolicySet_name:
+    type: string
+    description: name for the ApplicationPolicySet
+
+  applicationPolicySet_fq_name:
+    type: string
+    description: fq_name for the ApplicationPolicySet
+
+  is_global:
+    type: boolean
+    description: If set, indicates application policy set to be applied globally
+
+  annotationTag_key:
+    type: string
+    description: key for the ApplicationPolicySet
+
+  annotationTag_value:
+    type: string
+    description: value for the ApplicationPolicySet
+
+  global_vrouter_config_refs:
+    type: string
+    description: Reference to global-vrouter-config is automatically created by system for global
+
+  firewall_policy_refs:
+    type: string
+    description: Reference to firewall-policy attached to this application-policy
+
+  firewall_policy_refs_data_sequence:
+    type: string
+    description: sequence for the ApplicationPolicySet
+
+  tag_refs:
+    type: string
+    description: Tag attached to an object - has a type and value
+
+  project:
+    type: string
+    description: project for the ApplicationPolicySet
+
+resources:
+  template_ApplicationPolicySet:
+    type: OS::ContrailV2::ApplicationPolicySet
+    properties:
+      name: { get_param: applicationPolicySet_name }
+      fq_name: { get_param: applicationPolicySet_fq_name }
+      is_global: { get_param: is_global }
+      display_name: { get_param: applicationPolicySet_name }
+      annotations:
+        {
+          annotations_key_value_pair:
+            [{
+              annotations_key_value_pair_key: { get_param: annotationTag_key },
+              annotations_key_value_pair_value: { get_param: annotationTag_value },
+            }],
+        }
+      global_vrouter_config_refs: [{ get_param: global_vrouter_config_refs }]
+      firewall_policy_refs: [{ get_param: firewall_policy_refs }]
+      firewall_policy_refs_data:
+        [{
+          firewall_policy_refs_data_sequence: { get_param: firewall_policy_refs_data_sequence },
+        }]
+      tag_refs: [{ get_param: tag_refs }]
+      project: { get_param: project }
