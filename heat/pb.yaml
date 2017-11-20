@@ -1,0 +1,46 @@
+# CONTRAIL SECURITY
+
+# Author: SAVITHRU LOKANATH
+# Contact: SAVITHRU AT JUNIPER.NET
+# Copyright (c) 2017 Juniper Networks, Inc. All rights reserved
+
+heat_template_version: 2015-10-15
+
+description: >
+  HOT template to create a Tag:
+
+parameters:
+  tier3_tag_name:
+    type: string
+    description: name for the Tag
+  tier3_tag_value:
+    type: string
+    description: Tag Value
+  tier3_tagAnnotation_key:
+    type: string
+    description: key for the Tag
+  tier3_tagAnnotation_value:
+    type: string
+    description: value for the Tag
+  tier3_tag_type:
+    type: string
+    description: Tag type
+
+resources:
+  tier3_template_Tag:
+    type: OS::ContrailV2::Tag
+    properties:
+      name: { get_param: tier3_tag_name }
+      display_name: { get_param: tier3_tag_name }
+      tag_value: { get_param: tier3_tag_value }
+      annotations:
+        {
+          annotations_key_value_pair:
+            [{
+              annotations_key_value_pair_key: { get_param: tier3_tagAnnotation_key },
+              annotations_key_value_pair_value: { get_param: tier3_tagAnnotation_value },
+            }],
+        }
+      tag_type: { get_param: tier3_tag_type }
+      #project: "default-domain:demo"
+      project: "config-root"

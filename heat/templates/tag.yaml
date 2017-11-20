@@ -266,3 +266,4 @@ resources:
             }],
         }
       tag_type: { get_param: tier3_tag_type }
+      project: "config-root"

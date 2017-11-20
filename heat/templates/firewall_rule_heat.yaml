@@ -1,0 +1,120 @@
+heat_template_version: 2015-04-30
+
+description: >
+  HOT template to create a FirewallRule
+
+parameters:
+  firewallRule_name:
+    type: string
+    description: name for the FirewallRule
+
+  firewallRule_fq_name:
+    type: string
+    description: FQ name for FirewallRule
+
+  endpoint_1_tag:
+    type: string
+    description: Any workload with tags matching tags in this list
+
+  endpoint_2_tag:
+    type: string
+    description: Any workload with tags matching tags in this list
+
+  action:
+    type: string
+    description: Simple allow(pass) or deny action for traffic matching this rule
+
+  service_protocol:
+    type: string
+    description: Layer 4 protocol in ip packet
+
+  service_protocol_id:
+    type: number
+    description: Layer 4 protocol id in ip packet
+
+  service_src_ports_start_port:
+    type: number
+    description: start_port for the FirewallRule
+
+  service_src_ports_end_port:
+    type: number
+    description: end_port for the FirewallRule
+
+  service_dst_ports_start_port:
+    type: number
+    description: start_port for the FirewallRule
+
+  service_dst_ports_end_port:
+    type: number
+    description: end_port for the FirewallRule
+
+  direction:
+    type: string
+    description: Direction in the rule
+
+  match_tag_types_tag_type:
+    type: number
+    description: tag_type for the FirewallRule
+
+  match_tags_tag_list:
+    type: string
+    description: tag_list for the FirewallRule
+
+  firewallPolicy_name:
+    type: string
+    description: name for the FirewallPolicy
+
+resources:
+  template_FirewallRule:
+    type: OS::ContrailV2::FirewallRule
+    properties:
+      name: { get_param: firewallRule_name }
+      fq_name: { get_param: firewallRule_fq_name }
+      endpoint_1:
+        {
+          endpoint_1_tags: [{ get_param: endpoint_1_tag }],
+        }
+      endpoint_2:
+        {
+          endpoint_2_tags: [{ get_param: endpoint_2_tag }],
+        }
+      display_name: { get_param: firewallRule_name }
+      action_list:
+        {
+          action_list_simple_action: { get_param: action },
+        }
+      service:
+        {
+          service_protocol: { get_param: service_protocol },
+          service_protocol_id: { get_param: service_protocol_id },
+          service_src_ports:
+            {
+              service_src_ports_start_port: { get_param: service_src_ports_start_port },
+              service_src_ports_end_port: { get_param: service_src_ports_end_port },
+            },
+          service_dst_ports:
+            {
+              service_dst_ports_start_port: { get_param: service_dst_ports_start_port },
+              service_dst_ports_end_port: { get_param: service_dst_ports_end_port },
+            },
+        }
+      direction: { get_param: direction }
+      match_tag_types:
+        {
+          match_tag_types_tag_type: [{ get_param: match_tag_types_tag_type }],
+        }
+      match_tags:
+        {
+          match_tags_tag_list: [{ get_param: match_tags_tag_list }],
+        }
+
+  template_FirewallPolicy:
+    type: OS::ContrailV2::FirewallPolicy
+    depends_on: [ template_FirewallRule ]
+    properties:
+      name: { get_param: firewallPolicy_name }
+      display_name: { get_param: firewallPolicy_name }
+      firewall_rule_refs: [{ get_resource: template_FirewallRule }]
+      firewall_rule_refs_data:
+        [{
+        }]
